@@ -18,6 +18,6 @@ IN: aoc-2024.01
   histogram
   '[
     dup _ at
-    [ 0 ] unless*
+    0 or
     *
   ] map-sum ;
