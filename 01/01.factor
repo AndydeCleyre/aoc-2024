@@ -16,8 +16,4 @@ IN: aoc-2024.01
 : part2 ( -- n )
   get-input
   histogram
-  '[
-    dup _ at
-    0 or
-    *
-  ] map-sum ;
+  '[ dup _ at 0 or * ] map-sum ;
