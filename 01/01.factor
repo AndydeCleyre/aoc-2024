@@ -4,8 +4,7 @@ IN: aoc-2024.01
 
 : get-input ( -- left-list right-list )
   "aoc-2024.01" "input.txt" vocab-file-lines
-  [ split-words harvest ] map
-  [ keys ] [ values ] bi
+  [ split-words harvest ] map unzip
   [ [ string>number ] map ] bi@ ;
 
 : part1 ( -- n )
