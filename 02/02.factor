@@ -1,5 +1,6 @@
 USING: combinators.short-circuit.smart grouping kernel math
-math.order math.parser sequences splitting vocabs.metadata ;
+math.order math.parser sequences sequences.extras splitting
+vocabs.metadata ;
 IN: aoc-2024.02
 
 : get-input ( -- reports )
@@ -19,7 +20,7 @@ IN: aoc-2024.02
   get-input [ safe? ] count ;
 
 : fuzzy-reports ( report -- reports )
-  dup length <iota> [ over remove-nth ] map nip ;
+  dup length <iota> [ remove-nth-of ] with map ;
 
 : tolerable? ( report -- ? )
   { [ safe? ] [ fuzzy-reports [ safe? ] any? ] } || ;
