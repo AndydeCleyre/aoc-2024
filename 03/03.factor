@@ -1,10 +1,9 @@
-USING: assocs grouping.extras io.encodings.utf8 io.files
-math.parser pcre2 regexp sequences sequences.extras unicode
-vocabs.metadata ;
+USING: io.encodings.utf8 io.files math.parser pcre2 regexp
+sequences sequences.extras ;
 IN: aoc-2024.03
 
 : get-input ( -- corrupted-input )
-  "aoc-2024.03" "input.txt" vocab-file-path utf8 file-contents ;
+  "vocab:aoc-2024/03/input.txt" utf8 file-contents ;
 
 : get-muls ( corrupted-input -- instructions )
   R/ mul\(\d+,\d+\)/ all-matching-subseqs ;

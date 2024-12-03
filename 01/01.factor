@@ -1,9 +1,9 @@
-USING: assocs kernel math math.parser math.statistics sequences
-sequences.extras sorting splitting vocabs.metadata ;
+USING: assocs io.encodings.utf8 io.files kernel math math.parser
+math.statistics sequences sequences.extras sorting splitting ;
 IN: aoc-2024.01
 
 : get-input ( -- left-list right-list )
-  "aoc-2024.01" "input.txt" vocab-file-lines
+  "vocab:aoc-2024/01/input.txt" utf8 file-lines
   [ split-words harvest ] map unzip
   [ [ string>number ] map ] bi@ ;
 

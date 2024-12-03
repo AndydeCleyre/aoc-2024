@@ -1,10 +1,10 @@
-USING: combinators.short-circuit.smart grouping kernel math
-math.order math.parser sequences sequences.extras splitting
-vocabs.metadata ;
+USING: combinators.short-circuit.smart grouping
+io.encodings.utf8 io.files kernel math math.order math.parser
+sequences sequences.extras splitting ;
 IN: aoc-2024.02
 
 : get-input ( -- reports )
-  "aoc-2024.02" "input.txt" vocab-file-lines
+  "vocab:aoc-2024/02/input.txt" utf8 file-lines
   [ split-words [ string>number ] map ] map ;
 
 : slanted? ( report -- ? )
