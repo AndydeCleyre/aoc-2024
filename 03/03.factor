@@ -10,7 +10,7 @@ IN: aoc-2024.03
   R/ mul\(\d+,\d+\)/ all-matching-subseqs ;
 
 : process-mul ( instruction -- n )
-  [ digit? ] group-by [ ] filter-keys values
+  R/ \d+/ all-matching-subseqs
   [ string>number ] map-product ;
 
 : solve ( corrupted-input -- n )
