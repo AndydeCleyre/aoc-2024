@@ -49,25 +49,23 @@ IN: aoc-2024.04
   { [ ] [ verticals ] [ slashes ] [ backslashes ] } cleave-array concat
   [ word-count ] with map-sum ;
 
+: origin-adistances ( rows origins line-quot: ( rows origin -- line ) -- origin-adistances-assoc )
+  with zip-with
+  "MAS" "SAM" [ '[ [ _ subseq-indices ] map-values ] ] bi@ bi append
+  [ empty? ] reject-values
+  [ [ 1 + ] map ] map-values ; inline
+
+: a-coords ( origin-adistances coord-quot: ( adistance -- row-delta col-delta ) -- coords )
+  '[ first2 [ @ 2array v+ ] with map ] map-concat ; inline
+
 : slash-a-coords ( rows -- coords )
-  dup dimension slash-origins
-  [ slash ] with zip-with
-  [ [ "MAS" subseq-indices ] map-values ]
-  [ [ "SAM" subseq-indices ] map-values ] bi
-  [ [ empty? ] reject-values ] bi@
-  [ [ [ 1 + ] map ] map-values ] bi@
-  [ [ first2 [ [ 0 swap - ] keep 2array v+ ] with map ] map-concat ] bi@ append ;
+  dup dimension slash-origins [ slash ] origin-adistances
+  [ [ 0 swap - ] keep ] a-coords ;
 
 : backslash-a-coords ( rows -- coords )
-  dup dimension backslash-origins
-  [ backslash ] with zip-with
-  [ [ "MAS" subseq-indices ] map-values ]
-  [ [ "SAM" subseq-indices ] map-values ] bi
-  [ [ empty? ] reject-values ] bi@
-  [ [ [ 1 + ] map ] map-values ] bi@
-  [ [ first2 [ dup 2array v+ ] with map ] map-concat ] bi@ append ;
+  dup dimension backslash-origins [ backslash ] origin-adistances
+  [ dup ] a-coords ;
 
 : part2 ( -- n )
-  get-input
-  [ slash-a-coords ] [ backslash-a-coords ] bi@
+  get-input [ slash-a-coords ] [ backslash-a-coords ] bi
   intersect length ;
