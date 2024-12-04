@@ -52,7 +52,7 @@ IN: aoc-2024.04
 : origin-adistances ( rows origins line-quot: ( rows origin -- line ) -- origin-adistances-assoc )
   with zip-with
   "MAS" "SAM" [ '[ [ _ subseq-indices ] map-values ] ] bi@ bi append
-  [ empty? ] reject-values
+  harvest-values
   [ [ 1 + ] map ] map-values ; inline
 
 : a-coords ( origin-adistances coord-quot: ( adistance -- row-delta col-delta ) -- coords )
