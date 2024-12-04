@@ -1,6 +1,6 @@
 USING: arrays assocs combinators.extras io.encodings.utf8
-io.files kernel math math.matrices ranges sequences
-sequences.extras ;
+io.files kernel math math.matrices math.vectors ranges sequences
+sequences.extras sets ;
 IN: aoc-2024.04
 
 : get-input ( -- rows )
@@ -48,3 +48,26 @@ IN: aoc-2024.04
   "XMAS" get-input
   { [ ] [ verticals ] [ slashes ] [ backslashes ] } cleave-array concat
   [ word-count ] with map-sum ;
+
+: slash-a-coords ( rows -- coords )
+  dup dimension slash-origins
+  [ slash ] with zip-with
+  [ [ "MAS" subseq-indices ] map-values ]
+  [ [ "SAM" subseq-indices ] map-values ] bi
+  [ [ empty? ] reject-values ] bi@
+  [ [ [ 1 + ] map ] map-values ] bi@
+  [ [ first2 [ [ 0 swap - ] keep 2array v+ ] with map ] map-concat ] bi@ append ;
+
+: backslash-a-coords ( rows -- coords )
+  dup dimension backslash-origins
+  [ backslash ] with zip-with
+  [ [ "MAS" subseq-indices ] map-values ]
+  [ [ "SAM" subseq-indices ] map-values ] bi
+  [ [ empty? ] reject-values ] bi@
+  [ [ [ 1 + ] map ] map-values ] bi@
+  [ [ first2 [ dup 2array v+ ] with map ] map-concat ] bi@ append ;
+
+: part2 ( -- n )
+  get-input
+  [ slash-a-coords ] [ backslash-a-coords ] bi@
+  intersect length ;
