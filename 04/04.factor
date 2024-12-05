@@ -40,14 +40,14 @@ IN: aoc-2024.04
   dup dimension backslash-origins
   [ backslash ] with map ;
 
-: word-count ( word line -- n )
-  dup reverse rot
+: word-count ( line word -- n )
+  dupd [ reverse ] dip
   '[ _ subseq-indices length ] bi@ + ;
 
 : part1 ( -- n )
-  "XMAS" get-input
+  get-input
   { [ ] [ verticals ] [ slashes ] [ backslashes ] } cleave-array concat
-  [ word-count ] with map-sum ;
+  [ "XMAS" word-count ] map-sum ;
 
 : origin-adistances ( rows origins line-quot: ( rows origin -- line ) -- origin-adistances-assoc )
   with zip-with
