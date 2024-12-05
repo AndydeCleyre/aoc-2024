@@ -1,6 +1,6 @@
-USING: arrays combinators.extras grouping io.encodings.utf8
-io.files kernel math math.parser path-finding sequences
-sequences.extras sets splitting ;
+USING: arrays combinators.extras io.encodings.utf8 io.files
+kernel math math.order math.parser sequences sequences.extras
+sets sorting splitting ;
 IN: aoc-2024.05
 
 : get-input ( -- rules updates )
@@ -23,15 +23,12 @@ IN: aoc-2024.05
   [ compliant? ] with
   [ middle-number ] filter-map sum ;
 
-: update-astar ( -- astar )
-  [
-    dup 2 clump
-    [ dup reverse 2array ] map
-    [ first2 replace ] with map
-  ] [ 2drop 1 ] [ 2drop 1 ] <astar> ;
+: compare-pages ( rules page1 page2 -- <=> )
+  [ 2array relevant-rules ] keep-under
+  [ drop +eq+ ] [ first index zero? +gt+ +lt+ ? ] if-empty ;
 
 : correct-update ( rules update -- update' )
-  [ compliant? ] with update-astar find-path* last ;
+  [ swapd compare-pages ] with sort-with ;
 
 : part2 ( -- n )
   get-input dupd
