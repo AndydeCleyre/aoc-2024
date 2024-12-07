@@ -78,7 +78,6 @@ C: <state> state
   pick dupd adjoin (walk-loops?) ;
 
 : part2 ( -- n )
-  get-input dup all-locations
-  dupd [ obstacle? ] with reject
+  get-input [ dup guard-state walk-out members ] keep-under
   over guard-location remove-of
   [ CHAR: # spin deep-clone [ matrix-set-nth ] keep walk-loops? ] with count ;
