@@ -77,7 +77,10 @@ C: <state> state
   [ HS{ } clone ] 2dip
   pick dupd adjoin (walk-loops?) ;
 
+: obstacle-candidates ( rows -- pairs )
+  [ guard-location ]
+  [ dup guard-state walk-out members ] bi remove ;
+
 : part2 ( -- n )
-  get-input [ dup guard-state walk-out members ] keep-under
-  over guard-location remove-of
+  get-input dup obstacle-candidates
   [ CHAR: # spin deep-clone [ matrix-set-nth ] keep walk-loops? ] with count ;
