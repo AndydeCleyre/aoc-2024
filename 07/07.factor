@@ -12,16 +12,27 @@ C: <equation> equation
     swap [ string>number ] map <equation>
   ] map ;
 
-: possible-quotations ( numbers -- quots )
+: possible-quotations ( funcs numbers -- quots )
   dup length 1 -
-  { + * } swap all-selections
+  swapd all-selections
   [ unclip swap ] dip
   [ zip concat ] with map
   swap '[ _ prefix >quotation ] map ;
 
-: possibly-true? ( equation -- ? )
-  [ value>> ] [ numbers>> possible-quotations ] bi
-  [ call( -- n ) = ] with any? ;
+: possibly-true? ( funcs equation -- ? )
+  [ numbers>> possible-quotations ] [ value>> ] bi
+  '[ call( -- n ) _ = ] any? ;
+
+: solve ( funcs -- n )
+  get-input
+  [ possibly-true? ] with filter
+  [ value>> ] map-sum ;
 
 : part1 ( -- n )
-  get-input [ possibly-true? ] [ value>> ] filter-map sum ;
+  { + * } solve ;
+
+: _|| ( m n -- mn )
+  [ number>string ] bi@ append string>number ;
+
+: part2 ( -- n )
+  { + * _|| } solve ;
