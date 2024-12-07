@@ -1,6 +1,6 @@
 USING: accessors assocs combinators combinators.extras
 io.encodings.utf8 io.files kernel make math.matrices
-math.vectors sequences sets ;
+math.vectors sequences sequences.extras serialize sets ;
 IN: aoc-2024.06
 
 : get-input ( -- rows )
@@ -34,12 +34,13 @@ C: <state> state
   { 0 0 } v< vany? or ;
 
 : turn ( state -- state' )
-  [ H{
+  [ location>> ] [ char>> ] bi
+  H{
     { CHAR: > CHAR: v }
     { CHAR: v CHAR: < }
     { CHAR: < CHAR: ^ }
     { CHAR: ^ CHAR: > }
-  } at ] change-char ;
+  } at <state> ;
 
 : obstacle? ( rows location -- ? )
   swap matrix-nth CHAR: # = ;
@@ -49,7 +50,7 @@ C: <state> state
   {
     { [ 2dup off-grid? ] [ 2nip f <state> ] }
     { [ [ obstacle? ] keep-under ] [ drop turn ] }
-    [ >>location ]
+    [ swap char>> <state> ]
   } cond ;
 
 : walk-out ( rows state -- trail )
@@ -62,3 +63,22 @@ C: <state> state
 
 : part1 ( -- n )
   get-input dup guard-state walk-out cardinality ;
+
+: (walk-loops?) ( visited rows state -- looped? )
+  dupd guard-step
+  2dup location>> off-grid? [ 3drop f ] [
+    pick dupd in? [ 3drop t ] [
+      pick dupd adjoin (walk-loops?)
+    ] if
+  ] if ;
+
+: walk-loops? ( rows -- looped? )
+  dup guard-state
+  [ HS{ } clone ] 2dip
+  pick dupd adjoin (walk-loops?) ;
+
+: part2 ( -- n )
+  get-input dup all-locations
+  dupd [ obstacle? ] with reject
+  over guard-location remove-of
+  [ CHAR: # spin deep-clone [ matrix-set-nth ] keep walk-loops? ] with count ;
