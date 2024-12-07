@@ -9,14 +9,15 @@ IN: aoc-2024.04
 : verticals ( rows -- lines )
   [ dimension last [0..b) ] keep cols ;
 
-: slash-origins ( dimension -- coords )
+: slash-origins ( rows -- coords )
+  dimension
   [ first [0..b) [ 0 2array ] map ] [
     first2 [ 1 - ] [ 1 (a..b] ] bi*
     [ 2array ] with map
   ] bi append ;
 
-: backslash-origins ( dimension -- coords )
-  first2
+: backslash-origins ( rows -- coords )
+  dimension first2
   [ [0..b) [ 0 2array ] map ]
   [ 1 (a..b] [ 0 swap 2array ] map ] bi* append ;
 
@@ -33,11 +34,11 @@ IN: aoc-2024.04
   swap matrix-nths ;
 
 : slashes ( rows -- lines )
-  dup dimension slash-origins
+  dup slash-origins
   [ slash ] with map ;
 
 : backslashes ( rows -- lines )
-  dup dimension backslash-origins
+  dup backslash-origins
   [ backslash ] with map ;
 
 : word-count ( line word -- n )
@@ -59,11 +60,11 @@ IN: aoc-2024.04
   '[ first2 [ @ 2array v+ ] with map ] map-concat ; inline
 
 : slash-a-coords ( rows -- coords )
-  dup dimension slash-origins [ slash ] origin-adistances
+  dup slash-origins [ slash ] origin-adistances
   [ [ 0 swap - ] keep ] a-coords ;
 
 : backslash-a-coords ( rows -- coords )
-  dup dimension backslash-origins [ backslash ] origin-adistances
+  dup backslash-origins [ backslash ] origin-adistances
   [ dup ] a-coords ;
 
 : part2 ( -- n )
