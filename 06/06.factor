@@ -1,6 +1,6 @@
-USING: assocs combinators combinators.extras io.encodings.utf8
-io.files kernel make math.matrices math.vectors sequences sets
-shuffle ;
+USING: accessors assocs combinators combinators.extras
+io.encodings.utf8 io.files kernel make math.matrices
+math.vectors sequences sets ;
 IN: aoc-2024.06
 
 : get-input ( -- rows )
@@ -13,46 +13,52 @@ IN: aoc-2024.06
   [ all-locations ] keep
   '[ _ matrix-nth "<>^v" in? ] find nip ;
 
-: guard-state ( rows -- location char )
-  [ guard-location dup ] keep matrix-nth ;
+TUPLE: state location char ;
+C: <state> state
 
-: faced-location ( location char -- pair )
-  H{
+: guard-state ( rows -- state )
+  [ guard-location ]
+  [ dupd matrix-nth ] bi <state> ;
+
+: faced-location ( state -- pair )
+  [ char>> H{
     { CHAR: > { 0 1 } }
     { CHAR: v { 1 0 } }
     { CHAR: < { 0 -1 } }
     { CHAR: ^ { -1 0 } }
-  } at v+ ;
+  } at ] [ location>> ] bi v+ ;
 
 : off-grid? ( rows location -- ? )
   [ dimension ] dip
   [ v<= vany? ] keep
   { 0 0 } v< vany? or ;
 
-: turn ( char -- char' )
-  H{
+: turn ( state -- state' )
+  [ H{
     { CHAR: > CHAR: v }
     { CHAR: v CHAR: < }
     { CHAR: < CHAR: ^ }
     { CHAR: ^ CHAR: > }
-  } at ;
+  } at ] change-char ;
 
 : obstacle? ( rows location -- ? )
   swap matrix-nth CHAR: # = ;
 
-: (guard-step) ( location char rows faced-location -- location' char'/f )
+: guard-step ( rows state -- state' )
+  swap over faced-location
   {
-    { [ 2dup off-grid? ] [ 3nip f ] }
+    { [ 2dup off-grid? ] [ 2nip f <state> ] }
     { [ [ obstacle? ] keep-under ] [ drop turn ] }
-    [ -rot nip ]
+    [ >>location ]
   } cond ;
 
-: guard-step ( rows location char -- location' char'/f )
-  rot 2over faced-location (guard-step) ;
+: walk-out ( rows state -- trail )
+  [
+    [ 2dup location>> off-grid? ] [
+      dup location>> ,
+      dupd guard-step
+    ] until
+  ] { } make 2nip ;
 
 : part1 ( -- n )
-  get-input dup guard-state  ! rows loc char
-  [
-    [ 2over off-grid? ]
-    [ over , dupdd guard-step ] until
-  ] { } make cardinality 3nip ;
+  get-input dup guard-state walk-out cardinality ;
